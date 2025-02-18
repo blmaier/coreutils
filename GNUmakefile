@@ -22,6 +22,7 @@ ifeq ($(PROFILE),release)
 endif
 
 RM := rm -rf
+LN := $(shell command -v ln 2> /dev/null)
 
 # Binaries
 CARGO  ?= cargo
@@ -388,9 +389,9 @@ install: build install-manpages install-completions
 ifeq (${MULTICALL}, y)
 	$(INSTALL) $(BUILDDIR)/coreutils $(INSTALLDIR_BIN)/$(PROG_PREFIX)coreutils
 	$(foreach prog, $(filter-out coreutils, $(INSTALLEES)), \
-		cd $(INSTALLDIR_BIN) && ln -fs $(PROG_PREFIX)coreutils $(PROG_PREFIX)$(prog) $(newline) \
+		cd $(INSTALLDIR_BIN) && $(LN) -fs $(PROG_PREFIX)coreutils $(PROG_PREFIX)$(prog) $(newline) \
 	)
-	$(if $(findstring test,$(INSTALLEES)), cd $(INSTALLDIR_BIN) && ln -fs $(PROG_PREFIX)coreutils $(PROG_PREFIX)[)
+	$(if $(findstring test,$(INSTALLEES)), cd $(INSTALLDIR_BIN) && $(LN) -fs $(PROG_PREFIX)coreutils $(PROG_PREFIX)[)
 else
 	$(foreach prog, $(INSTALLEES), \
 		$(INSTALL) $(BUILDDIR)/$(prog) $(INSTALLDIR_BIN)/$(PROG_PREFIX)$(prog) $(newline) \
